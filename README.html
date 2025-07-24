@@ -1,1 +1,103 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Estuda+</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      padding: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      margin: 10px 0;
+      padding: 10px;
+      border-left: 5px solid #3498db;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .excluir {
+      background-color: #e74c3c;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 Estuda+</h1>
+  <p>Adicione suas matérias para receber lembretes diários!</p>
+
+  <input type="text" id="materia" placeholder="Digite o nome da matéria" />
+  <button onclick="adicionarMateria()">Adicionar Matéria</button>
+
+  <h2>📅 Lista de Estudos do Dia</h2>
+  <ul id="listaEstudos"></ul>
+
+  <script>
+    let lista = JSON.parse(localStorage.getItem("materias")) || [];
+
+    function atualizarLista() {
+      const ul = document.getElementById("listaEstudos");
+      ul.innerHTML = "";
+      lista.forEach((materia, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${materia}
+          <button class="excluir" onclick="excluirMateria(${index})">🗑</button>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function adicionarMateria() {
+      const input = document.getElementById("materia");
+      const novaMateria = input.value.trim();
+      if (novaMateria) {
+        lista.push(novaMateria);
+        localStorage.setItem("materias", JSON.stringify(lista));
+        input.value = "";
+        atualizarLista();
+        alert(`Matéria "${novaMateria}" adicionada!`);
+      }
+    }
+
+    function excluirMateria(index) {
+      const confirmacao = confirm(`Tem certeza que deseja excluir "${lista[index]}"?`);
+      if (confirmacao) {
+        lista.splice(index, 1);
+        localStorage.setItem("materias", JSON.stringify(lista));
+        atualizarLista();
+      }
+    }
+
+    window.onload = function () {
+      atualizarLista();
+      if (lista.length > 0) {
+        setTimeout(() => {
+          alert("⏰ Hora de estudar: " + lista[0]);
+        }, 1000);
+      }
+    };
+  </script>
+</body>
+</html>
